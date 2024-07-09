@@ -65,6 +65,7 @@ void runtime_install_stack_guard(void *stack_bottom) {
 }
 
 void runtime_init(void) {
+#if !PICO_HARDWARE_INITED
     // Reset all peripherals to put system into a known state,
     // - except for QSPI pads and the XIP IO bank, as this is fatal if running from flash
     // - and the PLLs, as this is fatal if clock muxing has not been reset on this boot
@@ -89,7 +90,7 @@ void runtime_init(void) {
             RESETS_RESET_UART1_BITS |
             RESETS_RESET_USBCTRL_BITS
     ));
-
+#endif
     // pre-init runs really early since we need it even for memcpy and divide!
     // (basically anything in aeabi that uses bootrom)
 
@@ -105,6 +106,7 @@ void runtime_init(void) {
         (*p)();
     }
 
+#if !PICO_HARDWARE_INITED
     // After calling preinit we have enough runtime to do the exciting maths
     // in clocks_init
     clocks_init();
@@ -117,6 +119,7 @@ void runtime_init(void) {
     padsbank0_hw_t *padsbank0_hw_clear = (padsbank0_hw_t *)hw_clear_alias_untyped(padsbank0_hw);
     padsbank0_hw_clear->io[26] = padsbank0_hw_clear->io[27] =
             padsbank0_hw_clear->io[28] = padsbank0_hw_clear->io[29] = PADS_BANK0_GPIO0_IE_BITS;
+#endif
 #endif
 
     // this is an array of either mutex_t or recursive_mutex_t (i.e. not necessarily the same size)

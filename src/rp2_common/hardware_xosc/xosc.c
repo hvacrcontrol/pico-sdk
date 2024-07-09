@@ -27,15 +27,12 @@
 #endif
 
 void xosc_init(void) {
-    // Assumes 1-15 MHz input, checked above.
-    xosc_hw->ctrl = XOSC_CTRL_FREQ_RANGE_VALUE_1_15MHZ;
-
     // Set xosc startup delay
     xosc_hw->startup = STARTUP_DELAY;
 
-    // Set the enable bit now that we have set freq range and startup delay
-    hw_set_bits(&xosc_hw->ctrl, XOSC_CTRL_ENABLE_VALUE_ENABLE << XOSC_CTRL_ENABLE_LSB);
-
+    // Assumes 1-15 MHz input, checked above. set the enable value
+    xosc_hw->ctrl = XOSC_CTRL_FREQ_RANGE_VALUE_1_15MHZ
+            | (XOSC_CTRL_ENABLE_VALUE_ENABLE << XOSC_CTRL_ENABLE_LSB);
     // Wait for XOSC to be stable
     while(!(xosc_hw->status & XOSC_STATUS_STABLE_BITS));
 }

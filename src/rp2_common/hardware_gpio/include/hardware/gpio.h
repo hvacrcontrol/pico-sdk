@@ -451,6 +451,18 @@ void gpio_set_irq_enabled_with_callback(uint gpio, uint32_t event_mask, bool ena
  */
 void gpio_set_dormant_irq_enabled(uint gpio, uint32_t event_mask, bool enabled);
 
+/*! \brief Return current raw interrupt status for the given GPIO 
+ *  \ingroup hardware_gpio
+ *
+ * \param gpio GPIO number 
+ * \return Bitmask of cuurrent status for the GPIO. See \ref gpio_irq_level for details.
+ * \sa gpio_acknowledge_irq
+ */
+static inline uint32_t gpio_get_raw_irq_mask(uint gpio) {
+    check_gpio_param(gpio);
+    return (iobank0_hw->intr[gpio / 8] >> ((gpio % 8) * 4)) & 0xfu;
+}
+
 /*! \brief Return the current interrupt status (pending events) for the given GPIO
  *  \ingroup hardware_gpio
  *
