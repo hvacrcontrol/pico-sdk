@@ -65,7 +65,7 @@ void runtime_install_stack_guard(void *stack_bottom) {
 }
 
 void runtime_init(void) {
-#if !PICO_HARDWARE_INITED
+#if SWG_BOOT_MODE != 1
     // Reset all peripherals to put system into a known state,
     // - except for QSPI pads and the XIP IO bank, as this is fatal if running from flash
     // - and the PLLs, as this is fatal if clock muxing has not been reset on this boot
@@ -106,7 +106,7 @@ void runtime_init(void) {
         (*p)();
     }
 
-#if !PICO_HARDWARE_INITED
+#if SWG_BOOT_MODE != 1
     // After calling preinit we have enough runtime to do the exciting maths
     // in clocks_init
     clocks_init();
@@ -122,6 +122,7 @@ void runtime_init(void) {
 #endif
 #endif
 
+#if SWG_BOOT_MODE != 0
     // this is an array of either mutex_t or recursive_mutex_t (i.e. not necessarily the same size)
     // however each starts with a lock_core_t, and the spin_lock is initialized to address 1 for a recursive
     // spinlock and 0 for a regular one.
@@ -167,6 +168,7 @@ void runtime_init(void) {
     spin_locks_reset();
     irq_init_priorities();
     alarm_pool_init_default();
+#endif
 
     // Start and end points of the constructor list,
     // defined by the linker script.
@@ -179,7 +181,6 @@ void runtime_init(void) {
     for (void (**p)(void) = &__init_array_start; p < &__init_array_end; ++p) {
         (*p)();
     }
-
 }
 
 void __attribute__((noreturn)) __attribute__((weak)) _exit(__unused int status) {

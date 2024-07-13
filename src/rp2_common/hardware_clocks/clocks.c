@@ -13,6 +13,7 @@
 #include "hardware/xosc.h"
 #include "hardware/irq.h"
 #include "hardware/gpio.h"
+#include "hardware/structs/rosc.h"
 
 // The RTC clock frequency is 48MHz divided by power of 2 (to ensure an integer
 // division ratio will be used in the clocks block).  A divisor of 1024 generates
@@ -195,6 +196,9 @@ void clocks_init(void) {
                     CLOCKS_CLK_PERI_CTRL_AUXSRC_VALUE_CLK_SYS,
                     SYS_CLK_KHZ * KHZ,
                     SYS_CLK_KHZ * KHZ);
+    
+    // reset ROSC to 1.8~12MHZ
+    rosc_hw->div = 0xaa0 + 16; 
 }
 
 /// \tag::clock_get_hz[]
