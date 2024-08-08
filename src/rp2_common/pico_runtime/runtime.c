@@ -118,7 +118,7 @@ void runtime_init(void) {
     // after resetting BANK0 we should disable IE on 26-29
     padsbank0_hw_t *padsbank0_hw_clear = (padsbank0_hw_t *)hw_clear_alias_untyped(padsbank0_hw);
     padsbank0_hw_clear->io[26] = padsbank0_hw_clear->io[27] =
-            padsbank0_hw_clear->io[28] = padsbank0_hw_clear->io[29] = PADS_BANK0_GPIO0_IE_BITS;
+            padsbank0_hw_clear->io[28] = padsbank0_hw_clear->io[29] = PADS_BANK0_GPIO0_IE_BITS | PADS_BANK0_GPIO0_PDE_BITS;
 #endif
 #endif
 
