@@ -165,6 +165,13 @@ extern "C" {
  */
 void clocks_init(void);
 
+/*! \brief Reset clk_sys and clk_ref
+ *  \ingroup hardware_clocks
+ *
+ *  Must be called before setting clk_sys and clk_ref.
+ */
+void clocks_reset(void);
+
 /*! \brief Configure the specified clock
  *  \ingroup hardware_clocks
  *

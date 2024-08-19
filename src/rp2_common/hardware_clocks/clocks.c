@@ -119,6 +119,16 @@ bool clock_configure(enum clock_index clk_index, uint32_t src, uint32_t auxsrc, 
 }
 /// \end::clock_configure[]
 
+void clocks_reset(void) {
+    rosc_hw->div = PICO_ROSC_DEFAULT_DIVIDER;
+    hw_clear_bits(&clocks_hw->clk[clk_sys].ctrl, CLOCKS_CLK_SYS_CTRL_SRC_BITS);
+    while (clocks_hw->clk[clk_sys].selected != 0x1)
+        tight_loop_contents();
+    hw_clear_bits(&clocks_hw->clk[clk_ref].ctrl, CLOCKS_CLK_REF_CTRL_SRC_BITS);
+    while (clocks_hw->clk[clk_ref].selected != 0x1)
+        tight_loop_contents();
+}
+
 void clocks_init(void) {
     // Start tick in watchdog, the argument is in 'cycles per microsecond' i.e. MHz
     watchdog_start_tick(XOSC_KHZ / KHZ);
@@ -139,12 +149,7 @@ void clocks_init(void) {
     xosc_init();
 
     // Before we touch PLLs, switch sys and ref cleanly away from their aux sources.
-    hw_clear_bits(&clocks_hw->clk[clk_sys].ctrl, CLOCKS_CLK_SYS_CTRL_SRC_BITS);
-    while (clocks_hw->clk[clk_sys].selected != 0x1)
-        tight_loop_contents();
-    hw_clear_bits(&clocks_hw->clk[clk_ref].ctrl, CLOCKS_CLK_REF_CTRL_SRC_BITS);
-    while (clocks_hw->clk[clk_ref].selected != 0x1)
-        tight_loop_contents();
+    clocks_reset();
 
     /// \tag::pll_init[]
     pll_init(pll_sys, PLL_COMMON_REFDIV, PLL_SYS_VCO_FREQ_KHZ * KHZ, PLL_SYS_POSTDIV1, PLL_SYS_POSTDIV2);

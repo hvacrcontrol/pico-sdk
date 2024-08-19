@@ -107,12 +107,8 @@ void runtime_init(void) {
     }
 
 #if SWG_BOOT_MODE != 1
-    // After calling preinit we have enough runtime to do the exciting maths
-    // in clocks_init
-    clocks_init();
-
-    // Peripheral clocks should now all be running
-    unreset_block_wait(RESETS_RESET_BITS);
+    // Reset clk_sys and clk_ref
+    clocks_reset();
 
 #if !PICO_IE_26_29_UNCHANGED_ON_RESET
     // after resetting BANK0 we should disable IE on 26-29
